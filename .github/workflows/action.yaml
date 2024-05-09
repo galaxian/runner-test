@@ -36,3 +36,23 @@ jobs:
 
       - name: Push the Docker image to Docker Hub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/runner-app:latest
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: Pull Latest Image
+        run: |
+          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/runner-app:latest
+
+      - name: Stop Current Running Container
+        run: |
+          sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
+
+      - name: Run Latest Image
+        run: |
+          sudo docker run --name api-server -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/runner-app:latest
+
+      - name: Delete Old Image
+        run: |
+          sudo docker system prune -f
