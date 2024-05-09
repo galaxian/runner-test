@@ -1,4 +1,4 @@
-name: cd pipeline
+name: CI/CD Pipeline
 
 on:
   push:
@@ -6,15 +6,12 @@ on:
       - main
 
 jobs:
-  deploy:
-    runs-on: self-hosted
-    env:
-      http_proxy: http://krmp-proxy.9rum.cc:3128
-      https_proxy: http://krmp-proxy.9rum.cc:3128
+  build:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: change permission
-        run: |
-          sudo chown -R ${{ secrets.NAME }}:${{ secrets.PASSWORD }} /home/actions-runner/_work/runner-test
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
       - name: Set up JDK 17
         uses: actions/setup-java@v2
@@ -22,19 +19,20 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - uses: actions/checkout@v3
-      - name: gradle build
-        run: |
-          cd /home/actions-runner/_work/runner-test/runner-test
-          chmod +x ./gradlew && ./gradlew clean build
+      - name: Build with Gradle
 
-      - name: kill 443 port if exist
-        run: |
-          if sudo lsof -i :443; then
-            echo "Port 443 is already in use. Killing the process..."
-            sudo lsof -i :443 | awk 'NR!=1 {print $2}' | sudo xargs kill -9
-          fi
+        run: chmod +x gradlew && ./gradlew build -x test
 
-      - name: deploy
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker Image
         run: |
-          sudo java -jar build/libs/runnertest-0.0.1-SNAPSHOT.jar
+          docker build -t runner-app:latest .
+          docker tag runner-app:latest ${{ secrets.DOCKER_USERNAME }}/runner-app:latest
+
+      - name: Push the Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/runner-app:latest
