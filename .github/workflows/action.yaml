@@ -43,7 +43,7 @@ jobs:
     steps:
       - name: Pull Latest Image
         run: |
-          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/runner-app:latest
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/runner-app:latest
 
       - name: Stop Current Running Container
         run: |
@@ -51,7 +51,7 @@ jobs:
 
       - name: Run Latest Image
         run: |
-          sudo docker run --name api-server -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/runner-app:latest
+          sudo docker run --name api-server -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/runner-app:latest
 
       - name: Delete Old Image
         run: |
