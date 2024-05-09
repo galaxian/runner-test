@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: change permission
         run: |
-          sudo chown -R ubuntu:ubuntu /home/ubuntu/actions-runner/_work/runner-test
+          sudo chown -R ${{ secrets.NAME }}:${{ secrets.PASSWORD }} /home/ubuntu/actions-runner/_work/runner-test
 
       - uses: actions/checkout@v3
       - name: gradle build
