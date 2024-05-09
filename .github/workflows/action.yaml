@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '17'
-          distribution: 'open-jdk'
+          distribution: 'openjdk'
 
       - uses: actions/checkout@v3
       - name: gradle build
