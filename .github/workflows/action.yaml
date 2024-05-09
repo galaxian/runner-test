@@ -6,6 +6,13 @@ on:
       - main
 
 jobs:
+  build:
+    runs-on: ubuntu
+    steps:
+      - uses: actions/checkout@v3
+      - name: gradle build
+        run: |
+          chmod +x gradlew && ./gradlew clean build
   deploy:
     runs-on: self-hosted
     env:
@@ -15,11 +22,6 @@ jobs:
       - name: change permission
         run: |
           sudo chown -R ${{ secrets.NAME }}:${{ secrets.PASSWORD }} /home/actions-runner/_work/runner-test
-
-      - uses: actions/checkout@v3
-      - name: gradle build
-        run: |
-          chmod +x gradlew && ./gradlew clean build
 
       - name: kill 443 port if exist
         run: |
