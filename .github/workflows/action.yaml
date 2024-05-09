@@ -8,6 +8,9 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
+    env:
+      http_proxy: http://krmp-proxy.9rum.cc:3128
+      https_proxy: http://krmp-proxy.9rum.cc:3128
     steps:
       - name: change permission
         run: |
@@ -22,7 +25,7 @@ jobs:
       - name: kill 443 port if exist
         run: |
           if sudo lsof -i :443; then
-            echo "Port 80 is already in use. Killing the process..."
+            echo "Port 443 is already in use. Killing the process..."
             sudo lsof -i :443 | awk 'NR!=1 {print $2}' | sudo xargs kill -9
           fi
 
