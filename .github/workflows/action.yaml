@@ -18,7 +18,7 @@ jobs:
         run:  sudo chmod +x /home/actions-runner/_work/runner-test/runner-test/gradlew
 
       - name: gradle build
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/gradle-build-action@v2
         with:
           arguments: build
 
