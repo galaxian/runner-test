@@ -7,11 +7,10 @@ jobs:
   deploy:
     runs-on: self-hosted
     steps:
-      - name: change permission
+      - name: Change Gradle Wrapper script permission
         run: |
           sudo chown -R ${{ secrets.NAME }}:${{ secrets.PASSWORD }} /home/actions-runner/_work/runner-test
-          sudo chown -R ${{ secrets.NAME }}:${{ secrets.PASSWORD }} /home/actions-runner/_work/runner-test/runner-test/gradlew
-          
+          sudo chmod +x /home/actions-runner/_work/runner-test/runner-test/gradlew
 
       - name: checkout Repository
         uses: actions/checkout@v3
@@ -27,6 +26,7 @@ jobs:
             echo "Port 443 is already in use. Killing the process..."
             sudo lsof -i :443 | awk 'NR!=1 {print $2}' | sudo xargs kill -9
           fi
+
       - name: deploy
         run: |
           sudo java -jar build/libs/runnertest-0.0.1-SNAPSHOT.jar
