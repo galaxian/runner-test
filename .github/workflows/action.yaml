@@ -43,6 +43,6 @@ jobs:
 
       - name: Deploy
         run: |
-          cd /home/actions-runner/_work/runner-test/build/libs/
+          cd /home/actions-runner/_work/runner-test/
           sudo chmod +x runnertest-0.0.1-SNAPSHOT.jar
           sudo java -jar runnertest-0.0.1-SNAPSHOT.jar
