@@ -10,6 +10,7 @@ jobs:
       - name: change permission
         run: |
           sudo chown -R ${{ secrets.NAME }}:${{ secrets.PASSWORD }} /home/actions-runner/_work/runner-test
+          chmod +x /home/actions-runner/_work/runner-test/runner-test/gradlew
 
       - name: checkout Repository
         uses: actions/checkout@v3
