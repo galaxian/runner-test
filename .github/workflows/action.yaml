@@ -4,36 +4,37 @@ on:
     branches:
       - main
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout Repository
+        uses: actions/checkout@v3
+
+      - name: gradle build
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean build
+
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: my-artifact
+          path: build/libs/*.jar
+
   deploy:
+    needs: build
     runs-on: self-hosted
     steps:
       - name: Change permission
         run: |
           sudo chown -R ${{ secrets.NAME }}:${{ secrets.PASSWORD }} /home/actions-runner/_work/runner-test
 
-      - name: checkout Repository
-        uses: actions/checkout@v3
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: my-artifact
+          path: /home/actions-runner/_work/runner-test
 
-      - name: Change Gradle Wrapper script permission
-        run:  sudo chmod +x /home/actions-runner/_work/runner-test/runner-test/gradlew
-
-#      - name: gradle build
-#        uses: gradle/gradle-build-action@v2
-#        with:
-#          arguments: build
-
-      - name: gradle build
+      - name: Deploy
         run: |
-          chmod +x ./gradlew && ./gradlew -Dhttp.proxyHost=krmp-proxy.9rum.cc -Dhttp.proxyPort=3128 -Dhttps.proxyHost=krmp-proxy.9rum.cc -Dhttps.proxyPort=3128
-          ./gradlew clean build
-
-      - name: kill 443 port if exist
-        run: |
-          if sudo lsof -i :443; then
-            echo "Port 443 is already in use. Killing the process..."
-            sudo lsof -i :443 | awk 'NR!=1 {print $2}' | sudo xargs kill -9
-          fi
-
-      - name: deploy
-        run: |
-          sudo java -jar build/libs/runnertest-0.0.1-SNAPSHOT.jar
+          sudo java -jar /home/actions-runner/_work/runner-test/build/libs/runnertest-0.0.1-SNAPSHOT.jar
