@@ -17,10 +17,15 @@ jobs:
       - name: Change Gradle Wrapper script permission
         run:  sudo chmod +x /home/actions-runner/_work/runner-test/runner-test/gradlew
 
+#      - name: gradle build
+#        uses: gradle/gradle-build-action@v2
+#        with:
+#          arguments: build
+
       - name: gradle build
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: build
+        run: |
+          chmod +x ./gradlew -Dhttp.proxyHost=http://krmp-proxy.9rum.cc -Dhttp.proxyPort=3128 -Dhttps.proxyHost=http://krmp-proxy.9rum.cc -Dhttps.proxyPort=3128
+          ./gradlew clean build
 
       - name: kill 443 port if exist
         run: |
