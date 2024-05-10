@@ -7,16 +7,18 @@ jobs:
   deploy:
     runs-on: self-hosted
     steps:
-      - name: Change Gradle Wrapper script permission
+      - name: Change permission
         run: |
           sudo chown -R ${{ secrets.NAME }}:${{ secrets.PASSWORD }} /home/actions-runner/_work/runner-test
-          sudo chmod +x /home/actions-runner/_work/runner-test/runner-test/gradlew
 
       - name: checkout Repository
         uses: actions/checkout@v3
 
+      - name: Change Gradle Wrapper script permission
+        run:  sudo chmod +x /home/actions-runner/_work/runner-test/runner-test/gradlew
+
       - name: gradle build
-        uses: gradle/gradle-build-action@v2.4.2
+        uses: gradle/gradle-build-action@v3
         with:
           arguments: build
 
