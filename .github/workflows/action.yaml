@@ -21,6 +21,19 @@ jobs:
           chmod +x ./gradlew
           ./gradlew clean build
 
+      - name: publish test result
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        with:
+          files: '**/build/test-results/test/TEST-*.xml'
+
+      - name: add comment in fail test
+        if: always()
+        uses: mikepenz/action-junit-report@v3
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+          token: ${{ github.token }}
+
       - name: Archive build artifacts
         uses: actions/upload-artifact@v2
         with:
