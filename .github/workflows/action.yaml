@@ -41,8 +41,13 @@ jobs:
           name: my-artifact
           path: /home/actions-runner/_work/runner-test
 
-      - name: Deploy
+      - name: Deploy temp
         run: |
           cd /home/actions-runner/_work/runner-test/
           ./deploy.sh
+
+      - name: Deploy main
+        run: |
+          cd /home/actions-runner/_work/runner-test/
+          ./deploy_default.sh
 
